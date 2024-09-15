@@ -1,10 +1,46 @@
-const http = require("node:http");
+import os from "node:os";
+import htpp from "node:http";
+import EventEmitter from "node:events";
+import fs from "node:fs";
 
-http
-  .createServer((request, response) => {
-    response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-    response.write("<h1>Hello Nguyên</h1>");
-    response.end();
+// Hàm thu thập thông tin hệ thống
+function getSystemInfo() {
+  const info = {
+    Type: os.type(),
+    Platform: os.platform(),
+    RAM: os.totalmem(),
+    USEDRAM: os.freemem(),
+    CPU: os.cpus(),
+  };
+  const PrintInfo = JSON.stringify(info, null, 2);
+  return PrintInfo;
+}
+
+// In ra thông tin hệ thống trình duyệt.
+htpp
+  .createServer((request, respone) => {
+    respone.write(getSystemInfo());
+    respone.end();
   })
+  .listen(8080);
 
-  .listen(3000);
+// Hàm lưu file
+function saveFile(systemInfo, filePath) {
+  fs.writeFile(filePath, systemInfo, (err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      emit.emit("fileSaved");
+    }
+  });
+}
+
+// Ghi thông tin đó ra một file và lưu trong D:/Homework
+const filePath = "D:/Homework/SystemInfo.txt";
+saveFile(getSystemInfo(), filePath);
+
+//Sau khi lưu xong file sẽ emit một sự kiện để console.log(‘Completed task!’)
+const emit = new EventEmitter();
+emit.on("fileSaved", () => {
+  console.log("completed task!");
+});
