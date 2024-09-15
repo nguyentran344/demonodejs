@@ -1,46 +1,48 @@
-import os from "node:os";
-import htpp from "node:http";
-import EventEmitter from "node:events";
-import fs from "node:fs";
-
-// Hàm thu thập thông tin hệ thống
-function getSystemInfo() {
-  const info = {
-    Type: os.type(),
-    Platform: os.platform(),
-    RAM: os.totalmem(),
-    USEDRAM: os.freemem(),
-    CPU: os.cpus(),
-  };
-  const PrintInfo = JSON.stringify(info, null, 2);
-  return PrintInfo;
-}
-
-// In ra thông tin hệ thống trình duyệt.
-htpp
-  .createServer((request, respone) => {
-    respone.write(getSystemInfo());
-    respone.end();
+// vidu ve http
+import http from "node:http";
+http
+  .createServer((request, response) => {
+    response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    response.write("<h1>Hello Nguyên</h1>");
+    response.end();
   })
+
   .listen(8080);
 
-// Hàm lưu file
-function saveFile(systemInfo, filePath) {
-  fs.writeFile(filePath, systemInfo, (err) => {
-    if (err) {
-      console.error(err);
-    } else {
-      emit.emit("fileSaved");
-    }
-  });
-}
+// vidu ve module
+import hellob, { hello } from "./demo_module.mjs";
+hello();
+hellob();
 
-// Ghi thông tin đó ra một file và lưu trong D:/Homework
-const filePath = "D:/Homework/SystemInfo.txt";
-saveFile(getSystemInfo(), filePath);
+// vidu ve path
+import path from "node:path";
+let name = "abc";
+let file = "xyz.txt";
+let a = path.join("/", name, file);
+console.log(a);
+console.log(path.basename(a));
+console.log(path.dirname(a));
+console.log(path.extname(a));
 
-//Sau khi lưu xong file sẽ emit một sự kiện để console.log(‘Completed task!’)
-const emit = new EventEmitter();
-emit.on("fileSaved", () => {
-  console.log("completed task!");
+// vidu ve os
+import os from "node:os";
+console.log(os.cpus());
+
+// vidu ve reading file
+import fs from "node:fs";
+fs.readFile("./hello.txt", "utf8", (err, data) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log(data);
 });
+console.log("xyz");
+
+// vidu ve event
+import EventEmitter from "node:events";
+const eventEmitter = new EventEmitter();
+eventEmitter.on("myEvent", (number, a, b) => {
+  console.log(`done ${number} ${a} !!!!`);
+});
+eventEmitter.emit("myEvent", 1, 2);
